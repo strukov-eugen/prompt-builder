@@ -1,0 +1,621 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "My API",
+        "description": "Описание вашего API для работы c пользователями и аутентификацией.",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1": {},
+        "/api/v1/auth/register": {
+            "post": {
+                "summary": "Регистрация нового пользователя",
+                "description": "Регистрирует нового пользователя c передачей email, пароля и других данных.",
+                "operationId": "b67aa682a65838c3798acc6150422664",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "age": {
+                                        "type": "integer",
+                                        "example": 25
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Пользователь успешно зарегистрирован"
+                    },
+                    "400": {
+                        "description": "Ошибка валидации данных"
+                    },
+                    "500": {
+                        "description": "Ошибка сервера"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "summary": "Логин пользователя",
+                "description": "Вход пользователя c использованием email и пароля.",
+                "operationId": "fa23e35de90662066e63450af37f6ce4",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный логин, возвращает токены."
+                    },
+                    "400": {
+                        "description": "Ошибка валидации данных"
+                    },
+                    "401": {
+                        "description": "Неверные учетные данные"
+                    },
+                    "500": {
+                        "description": "Ошибка сервера"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/refresh-token": {
+            "post": {
+                "summary": "Обновление access токена",
+                "description": "Обновляет access токен, используя refresh token.",
+                "operationId": "d14598cb1708174775788d87f301336f",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string",
+                                        "example": "refresh_token_here"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Новый access token"
+                    },
+                    "400": {
+                        "description": "Ошибка, если refresh token не передан."
+                    },
+                    "401": {
+                        "description": "Неверный или просроченный refresh token"
+                    },
+                    "500": {
+                        "description": "Ошибка сервера"
+                    }
+                }
+            }
+        },
+        "/api/v1/prompts": {
+            "get": {
+                "summary": "Получить список промтов",
+                "description": "Возвращает список промтов с фильтрами, пагинацией и сортировкой.",
+                "operationId": "bcaa277bcf4b115aaff5815d1d40a0bf",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы для пагинации",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Количество промтов на странице",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Поиск по названию или содержимому промта",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tags",
+                        "in": "query",
+                        "description": "Фильтрация по тегам (список через запятую)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Поле для сортировки",
+                        "schema": {
+                            "type": "string",
+                            "example": "updatedAt"
+                        }
+                    },
+                    {
+                        "name": "sortOrder",
+                        "in": "query",
+                        "description": "Направление сортировки",
+                        "schema": {
+                            "type": "string",
+                            "example": "desc"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешное получение списка промтов."
+                    },
+                    "400": {
+                        "description": "Неверные параметры запроса."
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "summary": "Создать новый промт",
+                "description": "Создаёт новый промт в базе данных.",
+                "operationId": "54d316765a21f5a8cb2a8d67c625147a",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "content"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Prompt name"
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "example": "This is the content of the prompt."
+                                    },
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "tag1",
+                                            "tag2"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Промт успешно создан."
+                    },
+                    "400": {
+                        "description": "Ошибка валидации данных."
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/prompts/{id}": {
+            "get": {
+                "summary": "Получить промт по ID",
+                "description": "Возвращает промт с указанным ID.",
+                "operationId": "422218c70381df22962db6886c7877de",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID промта",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешное получение промта по ID."
+                    },
+                    "404": {
+                        "description": "Промт не найден."
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "summary": "Обновить промт по ID",
+                "description": "Обновляет существующий промт по указанному ID.",
+                "operationId": "4d776296a7d20a35395bc29c5311c925",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID промта",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated prompt name"
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "example": "Updated content of the prompt."
+                                    },
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "tag1",
+                                            "tag3"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Промт успешно обновлён."
+                    },
+                    "400": {
+                        "description": "Ошибка валидации данных."
+                    },
+                    "404": {
+                        "description": "Промт не найден."
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "Удалить промт по ID",
+                "description": "Удаляет промт по указанному ID.",
+                "operationId": "7e168d5dcca3fc176e913c146f48cb37",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID промта",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Промт успешно удалён."
+                    },
+                    "404": {
+                        "description": "Промт не найден."
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/me": {
+            "get": {
+                "summary": "Получить данные текущего пользователя",
+                "description": "Возвращает данные пользователя, который аутентифицирован.",
+                "operationId": "05d4c190c587fcb3cad9b7d6a7895041",
+                "responses": {
+                    "200": {
+                        "description": "Успешное получение данных пользователя."
+                    },
+                    "401": {
+                        "description": "Пользователь не аутентифицирован."
+                    },
+                    "404": {
+                        "description": "Пользователь не найден."
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users": {
+            "get": {
+                "summary": "Получить список пользователей",
+                "description": "Получает список пользователей по переданным параметрам (ID, email и т. д.).",
+                "operationId": "f246e08123584ad5c595c33e1471be84",
+                "parameters": [
+                    {
+                        "name": "_id",
+                        "in": "query",
+                        "description": "Получить пользователя по его ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ids",
+                        "in": "query",
+                        "description": "Получить нескольких пользователей по ID (через запятую)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Найти пользователя по email",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешное получение списка пользователей."
+                    },
+                    "400": {
+                        "description": "Неверные параметры запроса."
+                    },
+                    "403": {
+                        "description": "Доступ запрещен."
+                    },
+                    "404": {
+                        "description": "Пользователи не найдены."
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "summary": "Создать нового пользователя",
+                "description": "Регистрирует нового пользователя.",
+                "operationId": "70bc479d7c5de043ab803a383385fb64",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john@example.com"
+                                    },
+                                    "age": {
+                                        "type": "integer",
+                                        "example": 30
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Пользователь успешно создан."
+                    },
+                    "400": {
+                        "description": "Ошибка валидации данных."
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера."
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/{id}": {
+            "put": {
+                "summary": "Обновить пользователя",
+                "description": "Обновляет информацию пользователе по ID.",
+                "operationId": "db778c6f3fcae4701a93fd1975604f4b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe Updated"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john_updated@example.com"
+                                    },
+                                    "age": {
+                                        "type": "integer",
+                                        "example": 31
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Пользователь успешно обновлён."
+                    },
+                    "400": {
+                        "description": "Ошибка валидации данных."
+                    },
+                    "404": {
+                        "description": "Пользователь не найден."
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "Удалить пользователя",
+                "description": "Удаляет пользователя по ID.",
+                "operationId": "9b1990dbebbd1dabfd76e2b17d22580d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Пользователь успешно удалён."
+                    },
+                    "404": {
+                        "description": "Пользователь не найден."
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "description": "JWT аутентификация",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    }
+}
